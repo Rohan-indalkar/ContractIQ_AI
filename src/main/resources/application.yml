@@ -1,0 +1,93 @@
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  application:
+    name: contractiq-backend
+  servlet:
+    multipart:
+      max-file-size: ${MAX_UPLOAD_BYTES}B
+      max-request-size: ${MAX_UPLOAD_BYTES}B
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: contractiq-processing
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: com.contractiq.contracts
+        max.poll.interval.ms: ${KAFKA_MAX_POLL_INTERVAL_MS:900000}
+        max.poll.records: ${KAFKA_MAX_POLL_RECORDS:1}
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL}
+      chat:
+        options:
+          model: ${OLLAMA_CHAT_MODEL}
+          temperature: 0.1
+      embedding:
+        options:
+          model: ${OLLAMA_EMBEDDING_MODEL}
+app:
+  jwt:
+    issuer: ${JWT_ISSUER:contractiq}
+    audience: ${JWT_AUDIENCE:contractiq-api}
+    secret: ${JWT_SECRET}
+    access-ttl: ${JWT_ACCESS_TTL:PT15M}
+    refresh-ttl: ${JWT_REFRESH_TTL:P30D}
+  storage:
+    endpoint: ${MINIO_ENDPOINT}
+    access-key: ${MINIO_ACCESS_KEY}
+    secret-key: ${MINIO_SECRET_KEY}
+    bucket: ${MINIO_BUCKET}
+  vector:
+    endpoint: ${QDRANT_ENDPOINT}
+    collection: ${QDRANT_COLLECTION}
+  upload:
+    max-bytes: ${MAX_UPLOAD_BYTES}
+  ocr:
+    binary: ${TESSERACT_BINARY:tesseract}
+    languages: ${TESSERACT_LANGUAGES:eng}
+    timeout-seconds: ${TESSERACT_TIMEOUT_SECONDS:60}
+  email:
+    brevo:
+      enabled: ${BREVO_EMAIL_ENABLED:false}
+      api-key: ${BREVO_API_KEY:}
+      sender-email: ${BREVO_SENDER_EMAIL:}
+      sender-name: ${BREVO_SENDER_NAME:ContractIQ}
+      poll-interval: ${EMAIL_OUTBOX_POLL_INTERVAL:5000}
+  outbox:
+    poll-interval: ${OUTBOX_POLL_INTERVAL:1000}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

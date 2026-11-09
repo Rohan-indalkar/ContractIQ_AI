@@ -1,0 +1,37 @@
+spring:
+  servlet:
+    multipart:
+      max-file-size: ${MAX_UPLOAD_BYTES:20971520}B
+      max-request-size: ${MAX_UPLOAD_BYTES:20971520}B
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/contractiq?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${MYSQL_USER:contractiq}
+    password: ${MYSQL_PASSWORD:contractiq-local-only}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      chat:
+        options:
+          model: ${OLLAMA_CHAT_MODEL:llama3.2:3b}
+      embedding:
+        options:
+          model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+  storage:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY:contractiq}
+    secret-key: ${MINIO_SECRET_KEY:contractiq-local-secret}
+    bucket: ${MINIO_BUCKET:contract-documents}
+  vector:
+    endpoint: ${QDRANT_ENDPOINT:http://localhost:6333}
+    collection: ${QDRANT_COLLECTION:contract_chunks}
+  upload:
+    max-bytes: ${MAX_UPLOAD_BYTES:20971520}
